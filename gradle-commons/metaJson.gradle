@@ -1,0 +1,95 @@
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+
+final METAJSON_DIR = ".MetaJSON"
+final FILENAME_CLOC = "Cloc.json"
+final FILENAME_DEPENDENCIES = "Dependencies.json"
+final FILENAME_PROJECT = "Project.json"
+
+ext.createDirIfNotExistant = { ->
+    def dir = new File(METAJSON_DIR)
+    if (!dir.exists()) {
+        dir.mkdir()
+    }
+}
+
+ext.writeJsonToFile = { fileName, input ->
+    new File(METAJSON_DIR + "/" + fileName).withWriter { out ->
+        out.println input
+    }
+}
+
+task createClocJson {
+    group 'MetaJSON'
+    description 'Writes the cloc output to a file "Cloc.json"'
+
+    doLast {
+        createDirIfNotExistant()
+
+        def output = new ByteArrayOutputStream()
+        exec {
+            commandLine '/usr/local/bin/cloc', '--vcs=git', '--json'
+            standardOutput output
+        }
+        def json = new JsonSlurper().parseText(output.toString())
+        json.remove('header')
+        writeJsonToFile(FILENAME_CLOC, JsonOutput.prettyPrint(JsonOutput.toJson(json)))
+    }
+}
+
+task createDependenciesJson {
+    group 'MetaJSON'
+    description 'Writes all used dependencies to a file "Dependencies.json"'
+
+    doLast {
+        createDirIfNotExistant()
+
+        def selectedDeps = project.configurations.compile.incoming.resolutionResult.allDependencies.collect { dep ->
+            "${dep.selected}"
+        }
+
+        def dependencies = []
+        selectedDeps.unique().sort().each {
+            def pattern = ~"(.+:.*):(.*)"
+            def matcher = it =~ pattern
+
+            if (matcher.find() && matcher.group(1) != null && matcher.group(2) != null) {
+                dependencies.add([name: matcher.group(1), version: matcher.group(2)])
+            }
+        }
+
+        def result = [dependencies: dependencies]
+        def json = JsonOutput.prettyPrint(JsonOutput.toJson(result))
+
+        writeJsonToFile(FILENAME_DEPENDENCIES, json)
+    }
+
+}
+
+task createProjectJson {
+    group 'MetaJSON'
+    description 'Writes all project infos to a file "Project.json"'
+
+    doLast {
+        createDirIfNotExistant()
+
+        def values = [:]
+        def releasePattern = ~".*[r|R]elease\$"
+        android.applicationVariants.all { variant ->
+            if (variant.name ==~ releasePattern) {
+                values["minSdkVersion"] = variant.mergedFlavor.minSdkVersion.mApiLevel
+                values["targetSdkVersion"] = variant.mergedFlavor.targetSdkVersion.mApiLevel
+            }
+        }
+        def compileSdkVersion = android.compileSdkVersion
+        values["compileSdkVersion"] = compileSdkVersion.substring(compileSdkVersion.length() - 2, compileSdkVersion.length()).toInteger()
+        values["buildToolsVersion"] = android.buildToolsVersion
+        values["dataBinding"] = android.dataBinding.enabled
+        values["jumboMode"] = android.dexOptions.jumboMode
+
+        def json = JsonOutput.prettyPrint(JsonOutput.toJson(values))
+
+        writeJsonToFile(FILENAME_PROJECT, json)
+
+    }
+}
