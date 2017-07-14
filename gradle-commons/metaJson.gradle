@@ -79,6 +79,7 @@ task createProjectJson {
             if (variant.name ==~ releasePattern) {
                 values["minSdkVersion"] = variant.mergedFlavor.minSdkVersion.mApiLevel
                 values["targetSdkVersion"] = variant.mergedFlavor.targetSdkVersion.mApiLevel
+                values["multiDex"] = variant.mergedFlavor.multiDexEnabled ?: false
             }
         }
         def compileSdkVersion = android.compileSdkVersion
@@ -86,6 +87,21 @@ task createProjectJson {
         values["buildToolsVersion"] = android.buildToolsVersion
         values["dataBinding"] = android.dataBinding.enabled
         values["jumboMode"] = android.dexOptions.jumboMode
+
+        def gradleVersionPattern = ~"^gradle-([0-9]+.*)\\.jar\$"
+        def kotlinVersionPattern = ~"^kotlin-stdlib-([0-9]+.*)\\.jar\$"
+        project.rootProject.buildscript.configurations.classpath.each { buildScriptDependency ->
+
+            def matcher = buildScriptDependency.name =~ gradleVersionPattern
+            if (matcher.find() && matcher.group(1) != null) {
+                values["gradleVersion"] = matcher.group(1)
+            }
+
+            matcher = buildScriptDependency.name =~ kotlinVersionPattern
+            if (matcher.find() && matcher.group(1) != null) {
+                values["kotlinVersion"] = matcher.group(1)
+            }
+        }
 
         def json = JsonOutput.prettyPrint(JsonOutput.toJson(values))
 
