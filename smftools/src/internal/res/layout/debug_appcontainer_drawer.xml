@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+  <de.smf.smftools.appcontainer.drawer.DebugDrawerLayout
+      android:id="@+id/debug_drawer_layout"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:fitsSystemWindows="true">
+
+      <com.jakewharton.madge.MadgeFrameLayout
+          android:id="@+id/madge_container"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent">
+
+        <com.jakewharton.scalpel.ScalpelFrameLayout
+            android:id="@+id/debug_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+      </com.jakewharton.madge.MadgeFrameLayout>
+
+    <de.smf.smftools.appcontainer.drawer.NonConsumingScrimInsetsFrameLayout
+        android:layout_width="290dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:background="#e222"
+        android:fitsSystemWindows="true"
+        app:insetForeground="#4000">
+
+      <ScrollView
+          android:id="@+id/debug_drawer"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:fitsSystemWindows="true"
+          android:clipToPadding="false" />
+    </de.smf.smftools.appcontainer.drawer.NonConsumingScrimInsetsFrameLayout>
+  </de.smf.smftools.appcontainer.drawer.DebugDrawerLayout>
+</layout>
