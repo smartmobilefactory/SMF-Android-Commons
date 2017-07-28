@@ -1,4 +1,4 @@
-package de.smf.smftools.utils
+package de.smf.smftools.utils.extensions
 
 import android.content.Context
 import android.content.Intent

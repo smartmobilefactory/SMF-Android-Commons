@@ -2,9 +2,9 @@ package de.smf.smftools.utils
 
 import android.app.Activity
 import android.content.Context
-import android.content.ContextWrapper
 import android.databinding.ViewDataBinding
 import android.support.v7.widget.RecyclerView
+import de.smf.smftools.utils.extensions.getActivity
 
 /**
  * ViewHolder which holds an ViewDataBinding
@@ -17,14 +17,5 @@ class BindingViewHolder<out T : ViewDataBinding>(
         get() = binding.root.context
 
     val activity: Activity?
-        get() {
-            var context = context
-            while (context is ContextWrapper) {
-                if (context is Activity) {
-                    return context
-                }
-                context = context.baseContext
-            }
-            return null
-        }
+        get() = context.getActivity()
 }
