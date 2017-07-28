@@ -7,7 +7,7 @@ import android.os.Bundle
 /** A "view server" adaptation which automatically hooks itself up to all activities.  */
 interface ActivityHierarchyServer : Application.ActivityLifecycleCallbacks {
     object NONE : ActivityHierarchyServer {
-        override fun onActivityCreated(activity: Activity, bundle: Bundle) {}
+        override fun onActivityCreated(activity: Activity, bundle: Bundle?) {}
 
         override fun onActivityStarted(activity: Activity) {}
 
@@ -17,7 +17,7 @@ interface ActivityHierarchyServer : Application.ActivityLifecycleCallbacks {
 
         override fun onActivityStopped(activity: Activity) {}
 
-        override fun onActivitySaveInstanceState(activity: Activity, bundle: Bundle) {}
+        override fun onActivitySaveInstanceState(activity: Activity, bundle: Bundle?) {}
 
         override fun onActivityDestroyed(activity: Activity) {}
     }
