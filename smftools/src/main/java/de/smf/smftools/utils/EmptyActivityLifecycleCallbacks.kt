@@ -5,7 +5,7 @@ import android.app.Application.ActivityLifecycleCallbacks
 import android.os.Bundle
 
 abstract class EmptyActivityLifecycleCallbacks : ActivityLifecycleCallbacks {
-    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle) {}
+    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
 
     override fun onActivityStarted(activity: Activity) {}
 
@@ -15,7 +15,7 @@ abstract class EmptyActivityLifecycleCallbacks : ActivityLifecycleCallbacks {
 
     override fun onActivityStopped(activity: Activity) {}
 
-    override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
+    override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle?) {}
 
     override fun onActivityDestroyed(activity: Activity) {}
 }
