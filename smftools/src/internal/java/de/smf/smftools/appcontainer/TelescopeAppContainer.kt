@@ -30,7 +30,7 @@ class TelescopeAppContainer : AppContainer {
     override fun bind(activity: Activity, group: ViewGroup): ViewGroup {
         activity.layoutInflater.inflate(R.layout.debug_appcontainer_telescope, group)
 
-        telescopeLayout = group.findViewById(R.id.telescope_container) as TelescopeLayout
+        telescopeLayout = group.findViewById<TelescopeLayout>(R.id.telescope_container)
         telescopeLayout.setPointerCount(POINT_COUNT)
         lens.setActivity(activity)
         telescopeLayout.setLens(lens)
@@ -55,7 +55,7 @@ class TelescopeAppContainer : AppContainer {
         val content = inflater.inflate(R.layout.debug_telescope_tutorial_dialog, null) as TelescopeLayout
         content.setPointerCount(POINT_COUNT)
 
-        val hintText = content.findViewById(R.id.hintText) as TextView
+        val hintText = content.findViewById<TextView>(R.id.hintText)
         hintText.text = Html.fromHtml("Found a bug? Report it!<br><br>Press and hold <b>three</b> fingers on the screen to launch the reporting dialog.")
 
         val dialog = AlertDialog.Builder(activity).setView(content).setCancelable(false).create()
@@ -73,7 +73,7 @@ class TelescopeAppContainer : AppContainer {
             }
         })
 
-        content.findViewById(R.id.close).setOnClickListener { dialog.dismiss() }
+        content.findViewById<View>(R.id.close).setOnClickListener { dialog.dismiss() }
 
         dialog.show()
     }

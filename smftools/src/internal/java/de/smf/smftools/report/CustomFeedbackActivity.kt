@@ -15,6 +15,6 @@ class CustomFeedbackActivity : FeedbackActivity() {
 
     override fun onResume() {
         super.onResume()
-        findViewById(net.hockeyapp.android.R.id.input_email).visibility = View.GONE
+        findViewById<View>(net.hockeyapp.android.R.id.input_email).visibility = View.GONE
     }
 }

@@ -4,7 +4,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 26
     buildToolsVersion "25.0.3"
 
     defaultConfig {
@@ -54,7 +54,7 @@ dependencies {
 
     compile 'com.github.timfreiheit:HockeySDKHelper:v0.6.0'
 
-    def android_support_version = "25.1.0"
+    def android_support_version = "26.0.0"
     compile "com.android.support:appcompat-v7:${android_support_version}"
     compile "com.android.support:support-v4:${android_support_version}"
     compile "com.android.support:support-annotations:${android_support_version}"
