@@ -69,7 +69,7 @@ dependencies {
     api 'com.jakewharton.byteunits:byteunits:0.9.1'
 
     api 'com.github.timfreiheit:HockeySDKHelper:v0.6.0'
-    api 'com.bugsnag:bugsnag-android:3.9.0'
+    api 'com.bugsnag:bugsnag-android:4.1.1'
 
     def android_support_version = "26.1.0"
     implementation "com.android.support:appcompat-v7:${android_support_version}"
