@@ -56,6 +56,7 @@ class TelescopeAppContainer : AppContainer {
         content.setPointerCount(POINT_COUNT)
 
         val hintText = content.findViewById<TextView>(R.id.hintText)
+        @Suppress("DEPRECATION")
         hintText.text = Html.fromHtml("Found a bug? Report it!<br><br>Press and hold <b>three</b> fingers on the screen to launch the reporting dialog.")
 
         val dialog = AlertDialog.Builder(activity).setView(content).setCancelable(false).create()
