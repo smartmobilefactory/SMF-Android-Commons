@@ -1,3 +1,4 @@
+@file:JvmName("Intents")
 package de.smf.smftools.utils.extensions
 
 import android.content.Context
