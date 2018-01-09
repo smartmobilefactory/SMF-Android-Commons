@@ -78,12 +78,12 @@ dependencies {
     implementation "com.android.support:appcompat-v7:${android_support_version}"
     implementation "com.android.support:design:${android_support_version}"
 
-    compile 'nz.bradcampbell:paperparcel:2.0.1'
-    compile 'nz.bradcampbell:paperparcel-kotlin:2.0.1'
+    implementation 'nz.bradcampbell:paperparcel:2.0.1'
+    implementation 'nz.bradcampbell:paperparcel-kotlin:2.0.1'
     kapt 'nz.bradcampbell:paperparcel-compiler:2.0.1'
 
-    compile 'io.reactivex.rxjava2:rxjava:2.1.1'
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.1'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
 
     internalImplementation 'com.mattprecious.telescope:telescope:2.1.0@aar'
     internalImplementation 'com.jakewharton.madge:madge:1.1.3'
