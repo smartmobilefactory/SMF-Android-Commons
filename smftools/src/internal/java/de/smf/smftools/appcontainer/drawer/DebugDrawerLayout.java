@@ -17,6 +17,7 @@
 
 package de.smf.smftools.appcontainer.drawer;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -494,6 +495,7 @@ public class DebugDrawerLayout extends ViewGroup implements DrawerLayoutImpl {
       throw new IllegalArgumentException("View " + drawerView + " is not a " +
           "drawer with appropriate layout_gravity");
     }
+    @SuppressLint("WrongConstant")
     final int gravity = ((LayoutParams) drawerView.getLayoutParams()).gravity;
     setDrawerLockMode(lockMode, gravity);
   }
@@ -839,6 +841,7 @@ public class DebugDrawerLayout extends ViewGroup implements DrawerLayoutImpl {
             heightSize - lp.topMargin - lp.bottomMargin, MeasureSpec.EXACTLY);
         child.measure(contentWidthSpec, contentHeightSpec);
       } else if (isDrawerView(child)) {
+          @SuppressLint("WrongConstant")
         final int childGravity =
             getDrawerViewAbsoluteGravity(child) & Gravity.HORIZONTAL_GRAVITY_MASK;
         if ((foundDrawers & childGravity) != 0) {
