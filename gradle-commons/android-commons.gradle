@@ -1,0 +1,3 @@
+apply from: "$rootDir/android-commons/gradle-commons/ktlint.gradle"
+apply from: "$rootDir/android-commons/gradle-commons/detekt.gradle"
+apply plugin: 'com.smartmobilefactory.metajson'

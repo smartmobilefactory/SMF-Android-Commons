@@ -11,7 +11,7 @@ task detekt(type: JavaExec, group: "verification") {
     classpath = configurations.detekt
     ignoreExitValue = true
     def input = "$projectDir"
-    def config = "detekt-config.yml"
+    def config = "$rootDir/android-commons/gradle-commons/detekt-config.yml"
     def filters = ".*build.*,.*/resources/.*,.*/tmp/.*"
     def report = "xml:$reportsDir/detekt/detekt.xml"
     def params = [ '-i', input, '-c', config, '-f', filters, '-r', report]
