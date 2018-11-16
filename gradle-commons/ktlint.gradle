@@ -11,5 +11,5 @@ task ktlint(type: JavaExec, group: "verification") {
     classpath = configurations.ktlint
     main = "com.github.shyiko.ktlint.Main"
     ignoreExitValue = true
-    args "--reporter=checkstyle,output=${reportsDir}/ktlint/ktlint.xml", "src/**/*.kt"
+    args "--reporter=checkstyle,output=${reportsDir}/ktlint/ktlint.xml", "--reporter=plain", "src/**/*.kt"
 }
