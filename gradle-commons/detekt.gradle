@@ -13,7 +13,7 @@ task detekt(type: JavaExec, group: "verification") {
     def input = "$projectDir"
     def config = "$rootDir/android-commons/gradle-commons/detekt-config.yml"
     def filters = ".*build.*,.*/resources/.*,.*/tmp/.*"
-    def report = "xml:$reportsDir/detekt/detekt.xml"
+    def report = "xml:$reportsDir/detekt/detekt.xml,html:$reportsDir/detekt/detekt.html"
     def params = [ '-i', input, '-c', config, '-f', filters, '-r', report]
     args(params)
 }
