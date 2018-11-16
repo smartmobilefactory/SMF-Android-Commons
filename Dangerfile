@@ -31,6 +31,18 @@ if !(ENV["DANGER_CHECKSTYLE_PATH"].nil?)
     checkstyle_format.report ENV["DANGER_CHECKSTYLE_PATH"]
 end
 
+## KTLINT:
+if !(ENV["DANGER_KTLINT_PATH"].nil?)
+    checkstyle_format.base_path = Dir.pwd
+    checkstyle_format.report ENV["DANGER_KTLINT_PATH"]
+end
+
+## DETEKT:
+if !(ENV["DANGER_DETEKT_PATH"].nil?)
+    checkstyle_format.base_path = Dir.pwd
+    checkstyle_format.report ENV["DANGER_DETEKT_PATH"]
+end
+
 ## JUNIT:
 if !(ENV["DANGER_JUNIT_PATH"].nil?)
     junit.parse ENV["DANGER_JUNIT_PATH"]
