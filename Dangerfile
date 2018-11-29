@@ -44,9 +44,13 @@ if !(ENV["DANGER_DETEKT_PATH"].nil?)
 end
 
 ## JUNIT:
-if !(ENV["DANGER_JUNIT_PATH"].nil?)
-    junit.parse ENV["DANGER_JUNIT_PATH"]
-    junit.report
+junit_tests_dir = ENV["DANGER_JUNIT_PATH"]
+if !(junit_tests_dir.nil?)
+    Dir["#{junit_tests_dir}/*.xml"].each do |file_name|
+      junit.parse file_name
+      junit.show_skipped_tests = true
+      junit.report
+    end
 end
 
 ## JIRA:
