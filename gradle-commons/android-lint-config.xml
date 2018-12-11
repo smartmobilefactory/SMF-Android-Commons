@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+
+    <issue id="RtlSymmetry" severity="ignore" />
+    <issue id="RtlHardcoded" severity="ignore" />
+    <issue id="ContentDescription" severity="ignore" />
+    <issue id="IconMissingDensityFolder" severity="ignore" />
+    <issue id="ShowToast" severity="ignore" />
+    <issue id="IconDensities" severity="ignore" />
+    <issue id="VectorRaster" severity="ignore" />
+    <issue id="UnusedAttribute" severity="ignore" />
+    <issue id="AllowBackup" severity="ignore" />
+    <issue id="GoogleAppIndexingWarning" severity="ignore" />
+    <issue id="SpUsage" severity="ignore" />
+    <issue id="AddJavascriptInterface" severity="ignore"/>
+    <issue id="RxLeakedSubscription" severity="ignore"/>
+    <!--Basically this should not be ignored, but unfortunately this checks has to much false-positives-->
+    <issue id="UnusedResources" severity="ignore" />
+    <issue id="SetJavaScriptEnabled" severity="ignore" />
+    <issue id="UseCompoundDrawables" severity="ignore" />
+    <issue id="HardwareIds" severity="ignore" />
+
+
+    <issue id="InvalidPackage">
+        <ignore regexp="okio-1.11.0.jar" />
+    </issue>
+
+    <issue id="InvalidPackage" severity="warning" />
+    <issue id="NewApi" severity="warning" />
+    <issue id="StringFormatInvalid" severity="warning" />
+
+    <issue id="HardcodedText" severity="error" />
+    <issue id="RxSubscribeOnError" severity="error" />
+    <issue id="Registered" severity="error" />
+    <issue id="LogConditional" severity="error" />
+
+    <issue id="InconsistentLayout">
+        <ignore path="build/*" />
+        <ignore regexp="notification_template_custom_big" />
+    </issue>
+    <issue id="Deprecated">
+        <ignore regexp="singleLine" />
+    </issue>
+</lint>

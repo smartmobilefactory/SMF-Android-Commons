@@ -1,3 +1,13 @@
 apply from: "$projectDir/../android-commons/gradle-commons/ktlint.gradle"
 apply from: "$projectDir/../android-commons/gradle-commons/detekt.gradle"
 apply plugin: 'com.smartmobilefactory.metajson'
+
+android {
+    lintOptions {
+        abortOnError false
+
+        lintConfig file("$projectDir/../android-commons/gradle-commons/android-lint-config.xml")
+        xmlOutput file("$projectDir/build/reports/lint/lint-result.xml")
+        htmlOutput file("$projectDir/build/reports/lint/lint-result.html")
+    }
+}

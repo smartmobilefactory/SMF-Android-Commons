@@ -19,9 +19,10 @@ if gradleErrorFileExists
 end
 
 ## LINT:
-if !(ENV["DANGER_LINT_GRADLE_TASK"].nil? || gradleErrorFileExists)
+if !(ENV["DANGER_LINT_PATH"].nil?)
+    android_lint.report_file = ENV["DANGER_LINT_PATH"]
     android_lint.filtering = true
-    android_lint.gradle_task = ENV["DANGER_LINT_GRADLE_TASK"]
+    android_lint.skip_gradle_task = true
     android_lint.lint(inline_mode: true)
 end
 
