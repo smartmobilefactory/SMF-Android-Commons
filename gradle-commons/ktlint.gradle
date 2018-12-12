@@ -13,3 +13,10 @@ task ktlint(type: JavaExec, group: "verification") {
     ignoreExitValue = true
     args "--reporter=checkstyle,output=${reportsDir}/ktlint/ktlint.xml", "--reporter=plain", "src/**/*.kt"
 }
+
+task ktlintFormat(type: JavaExec, group: "cleanup") {
+    description = "Fix Kotlin code style deviations."
+    classpath = configurations.ktlint
+    main = "com.github.shyiko.ktlint.Main"
+    args '-F', 'src/**/*.kt'
+}
