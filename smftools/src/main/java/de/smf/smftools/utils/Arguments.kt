@@ -23,8 +23,8 @@ interface Arguments : PaperParcelable {
 
     companion object {
 
-        val KEY_ARGUMENTS = "Arguments"
-        val KEY_TYPE = "Type"
+        const val KEY_ARGUMENTS = "Arguments"
+        const val KEY_TYPE = "Type"
 
         fun <T : Arguments> fromBundle(b: Bundle): T {
             return fromBundle(b, KEY_ARGUMENTS)
