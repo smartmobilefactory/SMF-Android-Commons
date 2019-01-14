@@ -3,6 +3,7 @@
 
     <issue id="RtlSymmetry" severity="ignore" />
     <issue id="RtlHardcoded" severity="ignore" />
+    <issue id="RtlEnabled" severity="ignore" />
     <issue id="ContentDescription" severity="ignore" />
     <issue id="IconMissingDensityFolder" severity="ignore" />
     <issue id="ShowToast" severity="ignore" />
@@ -23,6 +24,7 @@
 
     <issue id="InvalidPackage">
         <ignore regexp="okio-1.11.0.jar" />
+        <ignore regexp="twitter4j-core-4.0.7.jar" />
     </issue>
 
     <issue id="InvalidPackage" severity="warning" />
@@ -41,4 +43,29 @@
     <issue id="Deprecated">
         <ignore regexp="singleLine" />
     </issue>
+
+    <!-- Ignore accessibility issues -->
+    <issue id="ClickableViewAccessibility" severity="ignore" />
+    <issue id="KeyboardInaccessibleWidget" severity="ignore" />
+    <issue id="LabelFor" severity="ignore" />
+
+    <!-- Ignore overdraw issue -->
+    <issue id="Overdraw" severity="ignore" />
+
+    <!-- Ignore icons colors issue -->
+    <issue id="IconColors">
+        <ignore regexp="png"/>
+    </issue>
+    <issue id="IconDuplicates">
+        <ignore regexp="star"/>
+    </issue>
+
+    <!-- Ignore usability issue -->
+    <issue id="ButtonStyle" severity="ignore" />
+    <issue id="ButtonOrder" severity="ignore" />
+    <issue id="AlwaysShowAction" severity="ignore" />
+
+    <!-- Ignore i18n issue -->
+    <issue id="SetTextI18n" severity="ignore" />
+    <issue id="RelativeOverlap" severity="ignore" />
 </lint>
