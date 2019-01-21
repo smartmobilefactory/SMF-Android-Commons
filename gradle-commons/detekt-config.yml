@@ -467,7 +467,7 @@ style:
   RedundantVisibilityModifierRule:
     active: true
   ReturnCount:
-    active: true
+    active: false
     max: 5
     excludedFunctions: "equals"
   SafeCast:
@@ -485,13 +485,13 @@ style:
     active: true
     excludeAnnotatedClasses: "dagger.Module"
   UnnecessaryApply:
-    active: true
+    active: false
   UnnecessaryInheritance:
     active: true
   UnnecessaryLet:
     active: true
   UnnecessaryParentheses:
-    active: true
+    active: false
   UntilInsteadOfRangeTo:
     active: true
   UnusedImports:
