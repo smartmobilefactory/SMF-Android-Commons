@@ -13,6 +13,7 @@ pipeline {
         MANUAL_BUILD = "${currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause) != null}"
         DANGER_GITHUB_API_TOKEN = credentials('DANGER_GITHUB_API_TOKEN')
         HOCKEYAPP_API_TOKEN = credentials('HOCKEYAPP_API_TOKEN')
+        ANDROID_KEYSTORE_PW = credentials('ANDROID_KEYSTORE_PASSWORD')
     }
 
     parameters {
