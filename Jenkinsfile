@@ -8,8 +8,8 @@
 //////////////////////
 
 _ok_to_test_pattern = /^(ok to test)\s*$/
-_merge_trigger_pattern = /^merge ([a-zA-Z-_.]+) ([a-zA-Z-_.]+)\s*$/
-_project_name_pattern = /^([a-zA-Z_]+\/[a-zA-Z_]+)\/PR-[0-9]+$/
+_merge_trigger_pattern = /^release ([a-zA-Z0-9-_.]+)\s*$/
+_project_name_pattern = /^([a-zA-Z0-9-_.]+\/[a-zA-Z0-9-_.]+)\/PR-[0-9]+$/
 
 ////////////////////////////
 /// Declarative Pipeline ///
@@ -22,7 +22,7 @@ pipeline {
     environment {
         // The following environment variables cannot be overriden in stages.
 
-        // Fastlane Localisation
+        // Fastlane Localisation 
         LC_ALL = 'en_US.UTF-8'
         LANG = 'en_US.UTF-8'
         // Pipeline Process
@@ -44,7 +44,7 @@ pipeline {
     }
 
     stages {
-        stage('Checking Conditions') {
+        stage('Check Conditions') {
             steps {
                 script {
                     // Get the current build's cause and to understand how it has been triggered.
@@ -64,7 +64,7 @@ pipeline {
                         // The current build is linked to a PR when the CHANGE_ID variable is set.
                         env.CHECK_PR = "true"
                     }
-                }
+                }    
             }
         }
 
@@ -91,14 +91,14 @@ pipeline {
                         fail('FAILURE', "Pull Request '${env.JOB_NAME}' is not mergeable.")
                     }
 
-                    def (build_variant, branch) = merge_command()
+                    def build_variant = build_variant()
                     def project_path = downstream_project_path()
 
                     // Merge the related pull request.
                     pullRequest.merge(commitTitle: "${env.JOB_BASE_NAME} merge", commitMessage: "Merge triggered for ${env.JOB_NAME} with command: ${env.MERGE_COMMAND}", sha: "${env.GIT_COMMIT}", mergeMethod: "merge")
 
                     // Start a downstream job with the specified branch and build variant.
-                    build job: "${project_path}/${branch}", parameters: [string(name: 'build_variant', value: "${build_variant}")], wait: false
+                    build job: "${project_path}/${pullRequest.base}", parameters: [string(name: 'build_variant', value: "${build_variant}")], wait: false
                 }
             }
         }
@@ -121,17 +121,15 @@ pipeline {
 /// Utility Functions ///
 /////////////////////////
 
-/// Parameters 'build_variant' (aka. target) and 'branch' from the merge command (eg. the issue comment on GitHub).
-def merge_command() {
+/// Property 'build_variant' (aka. target) from the merge command (eg. the issue comment on GitHub).
+def build_variant() {
     def merge_command_matcher = (env.MERGE_COMMAND =~ _merge_trigger_pattern)
     if (merge_command_matcher.matches() == false) {
         fail('ABORTED', "Invalid merge command '${env.MERGE_COMMAND}' does not match pattern: ${_merge_trigger_pattern}")
     }
 
     def build_variant = merge_command_matcher.group(1)
-    def branch = merge_command_matcher.group(2)
-
-    return [build_variant, branch]
+    return build_variant
 }
 
 /// Path on Jenkins of the downstream project.
