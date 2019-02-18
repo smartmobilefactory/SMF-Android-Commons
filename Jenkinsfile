@@ -3,30 +3,75 @@
 // Automatically generated. Do not edit.
 //
 
+//////////////////////
+/// Regex Patterns ///
+//////////////////////
+
+_ok_to_test_pattern = /^(ok to test)\s*$/
+_merge_trigger_pattern = /^merge ([a-zA-Z-_.]+) ([a-zA-Z-_.]+)\s*$/
+_project_name_pattern = /^([a-zA-Z_]+\/[a-zA-Z_]+)\/PR-[0-9]+$/
+
+////////////////////////////
+/// Declarative Pipeline ///
+////////////////////////////
+
 pipeline {
 
     agent { label 'androidbuild' }
 
     environment {
+        // The following environment variables cannot be overriden in stages.
+
+        // Fastlane Localisation
         LC_ALL = 'en_US.UTF-8'
         LANG = 'en_US.UTF-8'
+        // Pipeline Process
         MANUAL_BUILD = "${currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause) != null}"
+        PR_MERGE_COMMAND_BUILD = "${currentBuild.rawBuild.getCause(hudson.model.Cause$UpstreamCause) != null}"
+        // Infrastructure and tools
         DANGER_GITHUB_API_TOKEN = credentials('DANGER_GITHUB_API_TOKEN')
         HOCKEYAPP_API_TOKEN = credentials('HOCKEYAPP_API_TOKEN')
         ANDROID_KEYSTORE_PW = credentials('ANDROID_KEYSTORE_PASSWORD')
     }
 
     parameters {
+        // Use generated project buld variants (aka. build targets of the related project).
         choice(choices: ['Alpha', 'Beta', 'Live'], description: 'Target', name: 'build_variant')
     }
 
     triggers {
-        issueCommentTrigger('ok to test')
+        issueCommentTrigger("${_ok_to_test_pattern}|${_merge_trigger_pattern}")
     }
 
     stages {
+        stage('Checking Conditions') {
+            steps {
+                script {
+                    // Get the current build's cause and to understand how it has been triggered.
+                    def triggerCause = currentBuild.rawBuild.getCause(org.jenkinsci.plugins.pipeline.github.trigger.IssueCommentCause)
+                    if (triggerCause) {
+                        if (triggerCause.comment ==~ _ok_to_test_pattern) {
+                            // Build triggered by a "ok to test" command.
+                            env.CHECK_PR = "true"
+                        } else if (triggerCause.comment ==~ _merge_trigger_pattern) {
+                            // Build triggered by a merge command.
+                            env.MERGE_COMMAND = triggerCause.comment
+                        } else {
+                            fail('ABORTED', "Command '${triggerCause.comment}' not matching trigger pattern: ${triggerCause.triggerPattern}")
+                        }
+                    } else {
+                        // Build was started with a push on a branch.
+                        // The current build is linked to a PR when the CHANGE_ID variable is set.
+                        env.CHECK_PR = "true"
+                    }
+                }
+            }
+        }
+
         stage('Check Pull Request') {
-            when { expression { env.CHANGE_ID != null } }
+            // CHANGE_ID is set only for pull requests, so it is safe to access the pullRequest global variable.
+            // CHECK_PR is set only for pushes on a branch with an active PR or with the command 'ok to test'.
+            when { expression { env.CHANGE_ID != null && env.CHECK_PR == "true" } }
 
             steps {
                 sh '''#!/bin/bash -l
@@ -36,8 +81,31 @@ pipeline {
             }
         }
 
+        stage('Merge Pull Request') {
+            // MERGE_COMMAND is set only when a merge command has triggered the current build.
+            when { expression { env.CHANGE_ID != null && env.MERGE_COMMAND != null } }
+
+            steps {
+                script {
+                    if (pullRequest.mergeable == false) {
+                        fail('FAILURE', "Pull Request '${env.JOB_NAME}' is not mergeable.")
+                    }
+
+                    def (build_variant, branch) = merge_command()
+                    def project_path = downstream_project_path()
+
+                    // Merge the related pull request.
+                    pullRequest.merge(commitTitle: "${env.JOB_BASE_NAME} merge", commitMessage: "Merge triggered for ${env.JOB_NAME} with command: ${env.MERGE_COMMAND}", sha: "${env.GIT_COMMIT}", mergeMethod: "merge")
+
+                    // Start a downstream job with the specified branch and build variant.
+                    build job: "${project_path}/${branch}", parameters: [string(name: 'build_variant', value: "${build_variant}")], wait: false
+                }
+            }
+        }
+
         stage('Build and Deploy') {
-            when { expression { env.MANUAL_BUILD == "true" } }
+            // Build and deploy only when the job has been manually triggered OR through a merge command on a PR.
+            when { expression { env.MANUAL_BUILD == "true" || env.PR_MERGE_COMMAND_BUILD == "true" } }
 
             steps {
                 sh '''#!/bin/bash -l
@@ -47,4 +115,46 @@ pipeline {
             }
         }
     }
+}
+
+/////////////////////////
+/// Utility Functions ///
+/////////////////////////
+
+/// Parameters 'build_variant' (aka. target) and 'branch' from the merge command (eg. the issue comment on GitHub).
+def merge_command() {
+    def merge_command_matcher = (env.MERGE_COMMAND =~ _merge_trigger_pattern)
+    if (merge_command_matcher.matches() == false) {
+        fail('ABORTED', "Invalid merge command '${env.MERGE_COMMAND}' does not match pattern: ${_merge_trigger_pattern}")
+    }
+
+    def build_variant = merge_command_matcher.group(1)
+    def branch = merge_command_matcher.group(2)
+
+    return [build_variant, branch]
+}
+
+/// Path on Jenkins of the downstream project.
+///
+/// The downstream project must be used to build a new release on a specific branch (not a pull request based one).
+/// Example: 'Selfie/Selfie-Android' from the env.JOB_NAME 'Selfie/Selfie-Android/PR-31'
+def downstream_project_path() {
+    def project_path_matcher = ("${env.JOB_NAME}" =~ _project_name_pattern)
+    if (project_path_matcher.matches() == false) {
+        fail('FAILURE', "Project name '${env.JOB_NAME}' not matching pattern: ${_project_name_pattern}")
+    }
+
+    def project_path = project_path_matcher.group(1)
+    return project_path
+}
+
+/// Set the result of the current build, log the error message and throw the an error.
+///
+/// Parameters:
+/// - result: Valid status keyword with color code: 'ABORTED' - gray, 'FAILURE' - red.
+/// - message: Error description.
+def fail(result, message) {
+    echo "Pipeline ${result}: ${message}"
+    currentBuild.result = result
+    error(message)
 }
