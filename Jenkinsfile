@@ -115,7 +115,7 @@ pipeline {
             }
         }
 
-        stage('Build and Deploy') {
+        stage('Build and Release') {
             // Build and deploy only when the job has been manually triggered OR through a merge command on a PR.
             when { expression { env.MANUAL_BUILD == "true" || env.PR_MERGE_COMMAND_BUILD == "true" } }
 
