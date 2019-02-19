@@ -8,8 +8,15 @@
 //////////////////////
 
 _ok_to_test_pattern = /^(ok to test)\s*$/
-_merge_trigger_pattern = /^release ([a-zA-Z0-9-_.]+)\s*$/
-_project_name_pattern = /^([a-zA-Z0-9-_.]+\/[a-zA-Z0-9-_.]+)\/PR-[0-9]+$/
+_merge_trigger_pattern = /^[release|merge]+ ([\w-_.]+)\s*$/
+_project_name_pattern = /^([\w-_.]+\/[\w-_.]+)\/PR-[\d]+$/
+
+/////////////////////////
+/// Static Parameters ///
+/////////////////////////
+
+_agent_label = 'androidbuild'
+_build_variants = ['Alpha', 'Beta', 'Live']
 
 ////////////////////////////
 /// Declarative Pipeline ///
@@ -17,12 +24,12 @@ _project_name_pattern = /^([a-zA-Z0-9-_.]+\/[a-zA-Z0-9-_.]+)\/PR-[0-9]+$/
 
 pipeline {
 
-    agent { label 'androidbuild' }
+    agent { label _agent_label }
 
     environment {
         // The following environment variables cannot be overriden in stages.
 
-        // Fastlane Localisation 
+        // Fastlane Localisation
         LC_ALL = 'en_US.UTF-8'
         LANG = 'en_US.UTF-8'
         // Pipeline Process
@@ -36,7 +43,7 @@ pipeline {
 
     parameters {
         // Use generated project buld variants (aka. build targets of the related project).
-        choice(choices: ['Alpha', 'Beta', 'Live'], description: 'Target', name: 'build_variant')
+        choice(choices: _build_variants, description: 'Target', name: 'build_variant')
     }
 
     triggers {
@@ -64,7 +71,7 @@ pipeline {
                         // The current build is linked to a PR when the CHANGE_ID variable is set.
                         env.CHECK_PR = "true"
                     }
-                }    
+                }
             }
         }
 
@@ -93,6 +100,11 @@ pipeline {
 
                     def build_variant = build_variant()
                     def project_path = downstream_project_path()
+
+                    if (_build_variants.contains(build_variant) == false) {
+                        def build_variants_description =  _build_variants.join("\n - ")
+                        fail('ABORTED', "Invalid build variant '${build_variant}'.\nAvailable targets (case sensitive):\n - ${build_variants_description}")
+                    }
 
                     // Merge the related pull request.
                     pullRequest.merge(commitTitle: "${env.JOB_BASE_NAME} merge", commitMessage: "Merge triggered for ${env.JOB_NAME} with command: ${env.MERGE_COMMAND}", sha: "${env.GIT_COMMIT}", mergeMethod: "merge")
@@ -151,8 +163,12 @@ def downstream_project_path() {
 /// Parameters:
 /// - result: Valid status keyword with color code: 'ABORTED' - gray, 'FAILURE' - red.
 /// - message: Error description.
-def fail(result, message) {
-    echo "Pipeline ${result}: ${message}"
+def fail(result, description) {
+    def message = "Pipeline ${result}: ${description}"
+    // Update the current build result.
     currentBuild.result = result
+    // Write the error message as comment on GitHub.
+    pullRequest.comment(message)
+    // Create/throw a pipeline error.
     error(message)
 }
