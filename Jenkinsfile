@@ -26,6 +26,11 @@ pipeline {
 
     agent { label _agent_label }
 
+    options {
+        // Skip default SCM checkout to speed the process when the git source is not needed (stages 'Check Conditions' and 'Merge Pull Request').
+        skipDefaultCheckout()
+    }
+
     environment {
         // The following environment variables cannot be overriden in stages.
 
@@ -81,6 +86,9 @@ pipeline {
             when { expression { env.CHANGE_ID != null && env.CHECK_PR == "true" } }
 
             steps {
+                // Git Checkout to access the source files.
+                checkout scm
+
                 sh '''#!/bin/bash -l
                     cd fastlane
                     fastlane building_pr_phase
@@ -107,7 +115,7 @@ pipeline {
                     }
 
                     // Merge the related pull request.
-                    pullRequest.merge(commitTitle: "${env.JOB_BASE_NAME} merge", commitMessage: "Merge triggered for ${env.JOB_NAME} with command: ${env.MERGE_COMMAND}", sha: "${env.GIT_COMMIT}", mergeMethod: "merge")
+                    pullRequest.merge(commitTitle: "${env.JOB_BASE_NAME} merge", commitMessage: "Merge triggered for ${env.JOB_NAME} with command: ${env.MERGE_COMMAND}", sha: "${pullRequest.head}", mergeMethod: "merge")
 
                     // Start a downstream job with the specified branch and build variant.
                     build job: "${project_path}/${pullRequest.base}", parameters: [string(name: 'build_variant', value: "${build_variant}")], wait: false
@@ -120,6 +128,9 @@ pipeline {
             when { expression { env.MANUAL_BUILD == "true" || env.PR_MERGE_COMMAND_BUILD == "true" } }
 
             steps {
+                // Git Checkout to access the source files.
+                checkout scm
+
                 sh '''#!/bin/bash -l
                     cd fastlane
                     fastlane releasing_pr_phase build_variant:${build_variant} branch:${BRANCH_NAME}
