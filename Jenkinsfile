@@ -37,9 +37,6 @@ pipeline {
         // Fastlane Localisation
         LC_ALL = 'en_US.UTF-8'
         LANG = 'en_US.UTF-8'
-        // Pipeline Process
-        MANUAL_BUILD = "${currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause) != null}"
-        PR_MERGE_COMMAND_BUILD = "${currentBuild.rawBuild.getCause(hudson.model.Cause$UpstreamCause) != null}"
         // Infrastructure and tools
         DANGER_GITHUB_API_TOKEN = credentials('DANGER_GITHUB_API_TOKEN')
         HOCKEYAPP_API_TOKEN = credentials('HOCKEYAPP_API_TOKEN')
@@ -124,8 +121,10 @@ pipeline {
         }
 
         stage('Build and Release') {
-            // Build and deploy only when the job has been manually triggered OR through a merge command on a PR.
-            when { expression { env.MANUAL_BUILD == "true" || env.PR_MERGE_COMMAND_BUILD == "true" } }
+            // Since the basic-branch-build-strategies plugin has been installed, the jobs are only automatically triggered for the PR jobs (regex: 'PR-[0-9]+').
+            // Doing so the 'Build and Release' stage is only executed when the job has been manually triggered via the Jenkins UI OR through a release command on a upstream PR job.
+            // In any case could the current build be linked to a PR and therefore the CHANGE_ID variable is never set.
+            when { expression { env.CHANGE_ID == null } }
 
             steps {
                 // Git Checkout to access the source files.
