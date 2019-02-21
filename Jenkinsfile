@@ -8,8 +8,15 @@
 //////////////////////
 
 _ok_to_test_pattern = /^(ok to test)\s*$/
-_merge_trigger_pattern = /^merge ([a-zA-Z-_.]+) ([a-zA-Z-_.]+)\s*$/
-_project_name_pattern = /^([a-zA-Z_]+\/[a-zA-Z_]+)\/PR-[0-9]+$/
+_merge_trigger_pattern = /^[release|merge]+ ([\w-_.]+)\s*$/
+_project_name_pattern = /^([\w-_.]+\/[\w-_.]+)\/PR-[\d]+$/
+
+/////////////////////////
+/// Static Parameters ///
+/////////////////////////
+
+_agent_label = 'androidbuild'
+_build_variants = ['Alpha', 'Beta', 'Live']
 
 ////////////////////////////
 /// Declarative Pipeline ///
@@ -17,7 +24,12 @@ _project_name_pattern = /^([a-zA-Z_]+\/[a-zA-Z_]+)\/PR-[0-9]+$/
 
 pipeline {
 
-    agent { label 'androidbuild' }
+    agent { label _agent_label }
+
+    options {
+        // Skip default SCM checkout to speed the process when the git source is not needed (stages 'Check Conditions' and 'Merge Pull Request').
+        skipDefaultCheckout()
+    }
 
     environment {
         // The following environment variables cannot be overriden in stages.
@@ -25,9 +37,6 @@ pipeline {
         // Fastlane Localisation
         LC_ALL = 'en_US.UTF-8'
         LANG = 'en_US.UTF-8'
-        // Pipeline Process
-        MANUAL_BUILD = "${currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause) != null}"
-        PR_MERGE_COMMAND_BUILD = "${currentBuild.rawBuild.getCause(hudson.model.Cause$UpstreamCause) != null}"
         // Infrastructure and tools
         DANGER_GITHUB_API_TOKEN = credentials('DANGER_GITHUB_API_TOKEN')
         HOCKEYAPP_API_TOKEN = credentials('HOCKEYAPP_API_TOKEN')
@@ -36,7 +45,7 @@ pipeline {
 
     parameters {
         // Use generated project buld variants (aka. build targets of the related project).
-        choice(choices: ['Alpha', 'Beta', 'Live'], description: 'Target', name: 'build_variant')
+        choice(choices: _build_variants, description: 'Target', name: 'build_variant')
     }
 
     triggers {
@@ -44,7 +53,7 @@ pipeline {
     }
 
     stages {
-        stage('Checking Conditions') {
+        stage('Check Conditions') {
             steps {
                 script {
                     // Get the current build's cause and to understand how it has been triggered.
@@ -74,6 +83,9 @@ pipeline {
             when { expression { env.CHANGE_ID != null && env.CHECK_PR == "true" } }
 
             steps {
+                // Git Checkout to access the source files.
+                checkout scm
+
                 sh '''#!/bin/bash -l
                     cd fastlane
                     fastlane building_pr_phase
@@ -91,23 +103,33 @@ pipeline {
                         fail('FAILURE', "Pull Request '${env.JOB_NAME}' is not mergeable.")
                     }
 
-                    def (build_variant, branch) = merge_command()
+                    def build_variant = build_variant()
                     def project_path = downstream_project_path()
 
+                    if (_build_variants.contains(build_variant) == false) {
+                        def build_variants_description =  _build_variants.join("\n - ")
+                        fail('ABORTED', "Invalid build variant '${build_variant}'.\nAvailable targets (case sensitive):\n - ${build_variants_description}")
+                    }
+
                     // Merge the related pull request.
-                    pullRequest.merge(commitTitle: "${env.JOB_BASE_NAME} merge", commitMessage: "Merge triggered for ${env.JOB_NAME} with command: ${env.MERGE_COMMAND}", sha: "${env.GIT_COMMIT}", mergeMethod: "merge")
+                    pullRequest.merge(commitTitle: "${env.JOB_BASE_NAME} merge", commitMessage: "Merge triggered for ${env.JOB_NAME} with command: ${env.MERGE_COMMAND}", sha: "${pullRequest.head}", mergeMethod: "merge")
 
                     // Start a downstream job with the specified branch and build variant.
-                    build job: "${project_path}/${branch}", parameters: [string(name: 'build_variant', value: "${build_variant}")], wait: false
+                    build job: "${project_path}/${pullRequest.base}", parameters: [string(name: 'build_variant', value: "${build_variant}")], wait: false
                 }
             }
         }
 
-        stage('Build and Deploy') {
-            // Build and deploy only when the job has been manually triggered OR through a merge command on a PR.
-            when { expression { env.MANUAL_BUILD == "true" || env.PR_MERGE_COMMAND_BUILD == "true" } }
+        stage('Build and Release') {
+            // Since the basic-branch-build-strategies plugin has been installed, the jobs are only automatically triggered for the PR jobs (regex: 'PR-[0-9]+').
+            // Doing so the 'Build and Release' stage is only executed when the job has been manually triggered via the Jenkins UI OR through a release command on a upstream PR job.
+            // In any case could the current build be linked to a PR and therefore the CHANGE_ID variable is never set.
+            when { expression { env.CHANGE_ID == null } }
 
             steps {
+                // Git Checkout to access the source files.
+                checkout scm
+
                 sh '''#!/bin/bash -l
                     cd fastlane
                     fastlane releasing_pr_phase build_variant:${build_variant} branch:${BRANCH_NAME}
@@ -121,17 +143,15 @@ pipeline {
 /// Utility Functions ///
 /////////////////////////
 
-/// Parameters 'build_variant' (aka. target) and 'branch' from the merge command (eg. the issue comment on GitHub).
-def merge_command() {
+/// Property 'build_variant' (aka. target) from the merge command (eg. the issue comment on GitHub).
+def build_variant() {
     def merge_command_matcher = (env.MERGE_COMMAND =~ _merge_trigger_pattern)
     if (merge_command_matcher.matches() == false) {
         fail('ABORTED', "Invalid merge command '${env.MERGE_COMMAND}' does not match pattern: ${_merge_trigger_pattern}")
     }
 
     def build_variant = merge_command_matcher.group(1)
-    def branch = merge_command_matcher.group(2)
-
-    return [build_variant, branch]
+    return build_variant
 }
 
 /// Path on Jenkins of the downstream project.
@@ -153,8 +173,12 @@ def downstream_project_path() {
 /// Parameters:
 /// - result: Valid status keyword with color code: 'ABORTED' - gray, 'FAILURE' - red.
 /// - message: Error description.
-def fail(result, message) {
-    echo "Pipeline ${result}: ${message}"
+def fail(result, description) {
+    def message = "Pipeline ${result}: ${description}"
+    // Update the current build result.
     currentBuild.result = result
+    // Write the error message as comment on GitHub.
+    pullRequest.comment(message)
+    // Create/throw a pipeline error.
     error(message)
 }
