@@ -9,7 +9,7 @@
 
 _ok_to_test_pattern = /^(ok to test)\s*$/
 _merge_trigger_pattern = /^[release|merge]+ ([\w-_.]+)\s*$/
-_project_name_pattern = /^([\w-_.]+\/[\w-_.]+)\/PR-[\d]+$/
+_project_name_pattern = /([\w-_.]+\/[\w-_.]+)\/PR-[\d]+$/
 
 /////////////////////////
 /// Static Parameters ///
