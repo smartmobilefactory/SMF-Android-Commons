@@ -9,7 +9,7 @@
 
 _ok_to_test_pattern = /^(ok to test)\s*$/
 _merge_trigger_pattern = /^[release|merge]+ ([\w-_.]+)\s*$/
-_project_name_pattern = /([\w-_.]+\/[\w-_.]+)\/PR-[\d]+$/
+_project_name_pattern = /([\w-_.\/]+)\/PR-[\d]+$/
 
 /////////////////////////
 /// Static Parameters ///
@@ -86,10 +86,12 @@ pipeline {
                 // Git Checkout to access the source files.
                 checkout scm
 
-                sh '''#!/bin/bash -l
-                    cd fastlane
-                    fastlane building_pr_phase
-                    '''
+                wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
+                    sh '''#!/bin/bash -l
+                        cd fastlane
+                        fastlane building_pr_phase
+                        '''
+                }
             }
         }
 
@@ -130,10 +132,12 @@ pipeline {
                 // Git Checkout to access the source files.
                 checkout scm
 
-                sh '''#!/bin/bash -l
-                    cd fastlane
-                    fastlane releasing_pr_phase build_variant:${build_variant} branch:${BRANCH_NAME}
-                    '''
+                wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
+                    sh '''#!/bin/bash -l
+                        cd fastlane
+                        fastlane releasing_pr_phase build_variant:${build_variant} branch:${BRANCH_NAME}
+                        '''
+                }
             }
         }
     }
