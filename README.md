@@ -1,3 +1,1 @@
 # SMF-Android-Commons
-
-test
