@@ -41,6 +41,7 @@ pipeline {
         DANGER_GITHUB_API_TOKEN = credentials('DANGER_GITHUB_API_TOKEN')
         HOCKEYAPP_API_TOKEN = credentials('HOCKEYAPP_API_TOKEN')
         ANDROID_KEYSTORE_PW = credentials('ANDROID_KEYSTORE_PASSWORD')
+        PHRASE_APP_TOKEN = credentials('PHRASEAPP_API_ACCESS_TOKEN')
     }
 
     parameters {
