@@ -16,7 +16,7 @@ _project_name_pattern = /([\w-_.\/]+)\/PR-[\d]+$/
 /////////////////////////
 
 _agent_label = 'androidbuild'
-_build_variants = ['Alpha', 'Beta', 'Live']
+_build_variants = __BUILD_VARIANTS__
 
 ////////////////////////////
 /// Declarative Pipeline ///
