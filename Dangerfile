@@ -12,9 +12,9 @@ todoist.print_todos_table
 
 ## GRADLE ERROR:
 pathToGradleError = "gradle_error"
-gradleErrorFileExists = File.exist?(pathToGradleError)
-if gradleErrorFileExists
+if File.exist?(pathToGradleError)
   error = File.read(pathToGradleError)
+  File.delete(pathToGradleError)
   fail(error)
 end
 
