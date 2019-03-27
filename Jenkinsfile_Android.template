@@ -42,6 +42,8 @@ pipeline {
         HOCKEYAPP_API_TOKEN = credentials('HOCKEYAPP_API_TOKEN')
         ANDROID_KEYSTORE_PW = credentials('ANDROID_KEYSTORE_PASSWORD')
         PHRASE_APP_TOKEN = credentials('PHRASEAPP_API_ACCESS_TOKEN')
+        SMF_SLACK_URL_IDENTIFIER = credentials('SMF_SLACK_URL_IDENTIFIER')
+        ONESIGNAL_SMF_API_KEY = credentials('ONESIGNAL_SMF_API_KEY')
     }
 
     parameters {
