@@ -39,6 +39,7 @@
     <issue id="InconsistentLayout">
         <ignore path="build/*" />
         <ignore regexp="notification_template_custom_big" />
+        <ignore path="**/sentry*.jar"/>
     </issue>
     <issue id="Deprecated">
         <ignore regexp="singleLine" />
