@@ -3,7 +3,6 @@ package de.smf.setup
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
-import android.widget.Toast
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.crashes.Crashes
 import com.microsoft.appcenter.distribute.Distribute
@@ -39,20 +38,14 @@ object SmfAppCenter {
     }
 
     data class DistributionConfig(
-        val updateActivityPredicate: Predicate<Activity>,
-        val inAppUpdates: Boolean
-    )
-
-    data class Predicate<T : Activity>(
-        val clazz: Class<out Activity>,
-        val matches: (otherClass: T) -> Boolean = { clazz.isInstance(it) }
+        val isUpdateActivity: (activity: Activity) -> Boolean = { true },
+        val inAppUpdates: Boolean = false
     )
 
     internal class ServiceStartCheck() : Application.ActivityLifecycleCallbacks {
         override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-            if (distributionConfig.updateActivityPredicate.matches(activity)) {
+            if (distributionConfig.isUpdateActivity(activity)) {
                 startDistributionService()
-                Toast.makeText(activity, "startDistributionService", Toast.LENGTH_LONG).show()
             }
         }
 
