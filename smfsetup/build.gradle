@@ -28,7 +28,8 @@ android {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    def appCenterSdkVersion = '2.3.0'
+    // AppCenter
+    def appCenterSdkVersion = '2.4.1'
     implementation "com.microsoft.appcenter:appcenter-distribute:${appCenterSdkVersion}"
     implementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
 
