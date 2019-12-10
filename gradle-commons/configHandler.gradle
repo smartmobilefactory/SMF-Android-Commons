@@ -1,0 +1,23 @@
+ext.injectConfig = { configJson ->
+    android {
+        defaultConfig {
+            versionCode configJson.app_version_code
+        }
+
+        applicationVariants.all { variant ->
+            def variantData
+            for(entry in configJson.build_variants) {
+                def declaredVariant = entry.value["variant"] ?: ""
+                if(declaredVariant == variant.name) {
+                    variantData = entry
+                }
+            }
+
+            def appcenter_id = ""
+            if(variantData != null) {
+                appcenter_id = variantData.value["appcenter_id"] ?: ""
+            }
+            variant.buildConfigField "String", "APPCENTER_APP_ID", "\"${appcenter_id}\""
+        }
+    }
+}
