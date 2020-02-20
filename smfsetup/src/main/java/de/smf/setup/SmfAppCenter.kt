@@ -6,6 +6,7 @@ import android.os.Bundle
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.crashes.Crashes
 import com.microsoft.appcenter.distribute.Distribute
+import com.microsoft.appcenter.distribute.UpdateTrack
 
 object SmfAppCenter {
 
@@ -32,6 +33,7 @@ object SmfAppCenter {
 
     private fun startDistributionService() {
         if (distributionConfig.inAppUpdates && !Distribute.isEnabled().get()) {
+            Distribute.setUpdateTrack(UpdateTrack.PUBLIC)
             AppCenter.start(Distribute::class.java)
             Distribute.setEnabledForDebuggableBuild(true)
         }
