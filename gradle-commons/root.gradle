@@ -1,0 +1,32 @@
+
+task allLicenseReport {
+}
+
+buildscript {
+    ext {
+        defineClasspath = { dependencyHandler ->
+            dependencyHandler.classpath 'com.jaredsburrows:gradle-license-plugin:0.8.6'
+            dependencyHandler.classpath "com.github.smartmobilefactory:Android-MetaJSON-Plugin:0.1"
+        }
+
+        forAllProjects = { project ->
+            project.apply plugin: 'com.jaredsburrows.license'
+            project.licenseReport {
+                generateHtmlReport = false
+                generateJsonReport = true
+
+                copyHtmlReportToAssets = false
+                copyJsonReportToAssets = false
+            }
+            project.afterEvaluate {
+                allLicenseReport.dependsOn {
+                    project.tasks.findAll {
+                        task -> task.name.matches('license.*Report') &&
+                                task.name.contains("Release") &&
+                                !task.name.contains("test")
+                    }
+                }
+            }
+        }
+    }
+}
