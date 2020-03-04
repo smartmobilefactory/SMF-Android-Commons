@@ -24,7 +24,7 @@ allprojects {
 
 ```
 
-Mofiy app `build.gradle`
+Modify app `build.gradle`
 
 ```
 apply from: "$rootDir/android-commons/gradle-commons/android-commons.gradle"
