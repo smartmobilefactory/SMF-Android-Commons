@@ -2,6 +2,7 @@ apply from: "$projectDir/../android-commons/gradle-commons/ktlint.gradle"
 apply from: "$projectDir/../android-commons/gradle-commons/detekt.gradle"
 apply from: "$projectDir/../android-commons/gradle-commons/configHandler.gradle"
 apply plugin: 'com.smartmobilefactory.metajson'
+apply plugin: 'org.owasp.dependencycheck'
 
 android {
     lintOptions {
@@ -11,4 +12,8 @@ android {
         xmlOutput file("$projectDir/build/reports/lint/lint-result.xml")
         htmlOutput file("$projectDir/build/reports/lint/lint-result.html")
     }
+}
+
+dependencyCheck {
+    format = 'ALL'
 }

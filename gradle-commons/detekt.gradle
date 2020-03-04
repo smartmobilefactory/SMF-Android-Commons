@@ -3,7 +3,7 @@ configurations {
 }
 
 dependencies {
-    detekt 'io.gitlab.arturbosch.detekt:detekt-cli:1.0.0-RC10'
+    detekt 'io.gitlab.arturbosch.detekt:detekt-cli:1.6.0'
 }
 
 task detekt(type: JavaExec, group: "verification") {
@@ -12,8 +12,7 @@ task detekt(type: JavaExec, group: "verification") {
     ignoreExitValue = true
     def input = "$projectDir"
     def config = "$rootDir/android-commons/gradle-commons/detekt-config.yml"
-    def filters = ".*build.*,.*/resources/.*,.*/tmp/.*"
     def report = "xml:$reportsDir/detekt/detekt.xml,html:$reportsDir/detekt/detekt.html"
-    def params = [ '-i', input, '-c', config, '-f', filters, '-r', report]
+    def params = [ '-i', input, '-c', config, '-r', report]
     args(params)
 }
