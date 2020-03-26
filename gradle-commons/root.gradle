@@ -11,7 +11,18 @@ buildscript {
         }
 
         forAllProjects = { project ->
+            if (project == project.getRootProject()) {
+                // avoid adding plugins to root project
+                return
+            }
+
             project.apply plugin: 'com.jaredsburrows.license'
+
+            if (project.name != "smfsetup") {
+                project.apply from: "$projectDir/android-commons/gradle-commons/ktlint.gradle"
+                project.apply from: "$projectDir/android-commons/gradle-commons/detekt.gradle"
+            }
+
             project.licenseReport {
                 generateHtmlReport = false
                 generateJsonReport = true

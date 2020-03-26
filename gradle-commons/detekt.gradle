@@ -10,6 +10,7 @@ task detekt(type: JavaExec, group: "verification") {
     main = "io.gitlab.arturbosch.detekt.cli.Main"
     classpath = configurations.detekt
     ignoreExitValue = true
+    def reportsDir = project.file('build/reports')
     def input = "$projectDir"
     def config = "$rootDir/android-commons/gradle-commons/detekt-config.yml"
     def report = "xml:$reportsDir/detekt/detekt.xml,html:$reportsDir/detekt/detekt.html"
