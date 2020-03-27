@@ -2,6 +2,9 @@
 task allLicenseReport {
 }
 
+task allUnitTest {
+}
+
 buildscript {
     ext {
         defineClasspath = { dependencyHandler ->
@@ -37,6 +40,15 @@ buildscript {
                                 task.name.contains("Release") &&
                                 !task.name.contains("test")
                     }
+                }
+                allUnitTest.dependsOn {
+                    testTasks = project.tasks.findAll {
+                        task -> task.name.matches('test.*UnitTest')
+                    }
+                    if (testTasks.size() > 1) {
+                        testTasks = Collections.singleton(testTasks.first())
+                    }
+                    testTasks
                 }
             }
         }
