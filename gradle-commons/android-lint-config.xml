@@ -13,14 +13,19 @@
     <issue id="AllowBackup" severity="ignore" />
     <issue id="GoogleAppIndexingWarning" severity="ignore" />
     <issue id="SpUsage" severity="ignore" />
-    <issue id="AddJavascriptInterface" severity="ignore"/>
-    <issue id="RxLeakedSubscription" severity="ignore"/>
+    <issue id="AddJavascriptInterface" severity="ignore" />
+    <issue id="RxLeakedSubscription" severity="ignore" />
     <!--Basically this should not be ignored, but unfortunately this checks has to much false-positives-->
     <issue id="UnusedResources" severity="ignore" />
     <issue id="SetJavaScriptEnabled" severity="ignore" />
     <issue id="UseCompoundDrawables" severity="ignore" />
     <issue id="HardwareIds" severity="ignore" />
 
+    <!--
+        sometimes tools like PhraseApp are used to create the generate the string files
+        we do not have the control about if all strings are translated in this tool
+     -->
+    <issue id="MissingTranslation" severity="ignore" />
 
     <issue id="InvalidPackage">
         <ignore regexp="okio-1.11.0.jar" />
@@ -39,7 +44,7 @@
     <issue id="InconsistentLayout">
         <ignore path="build/*" />
         <ignore regexp="notification_template_custom_big" />
-        <ignore path="**/sentry*.jar"/>
+        <ignore path="**/sentry*.jar" />
     </issue>
     <issue id="Deprecated">
         <ignore regexp="singleLine" />
@@ -55,10 +60,10 @@
 
     <!-- Ignore icons colors issue -->
     <issue id="IconColors">
-        <ignore regexp="png"/>
+        <ignore regexp="png" />
     </issue>
     <issue id="IconDuplicates">
-        <ignore regexp="star"/>
+        <ignore regexp="star" />
     </issue>
 
     <!-- Ignore usability issue -->
