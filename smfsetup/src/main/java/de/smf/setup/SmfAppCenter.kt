@@ -44,7 +44,7 @@ object SmfAppCenter {
         val inAppUpdates: Boolean = false
     )
 
-    internal class ServiceStartCheck() : Application.ActivityLifecycleCallbacks {
+    internal class ServiceStartCheck : Application.ActivityLifecycleCallbacks {
         override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
             if (distributionConfig.isUpdateActivity(activity)) {
                 startDistributionService()

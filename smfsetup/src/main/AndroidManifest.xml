@@ -1,1 +1,12 @@
-<manifest package="de.smf.smfsetup" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="de.smf.smfsetup">
+
+    <application>
+        <provider
+            android:name="io.sentry.android.core.SentryInitProvider"
+            android:authorities="${applicationId}.SentryInitProvider"
+            tools:node="remove"
+            android:exported="false" />
+    </application>
+</manifest>
