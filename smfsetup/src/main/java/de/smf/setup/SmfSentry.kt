@@ -10,9 +10,9 @@ import timber.log.Timber
 
 object SmfSentry {
     fun setup(
-            application: Application,
-            sentryDSN: String,
-            buildType: String
+        application: Application,
+        sentryDSN: String,
+        buildType: String
     ) {
 
         SentryAndroid.init(application) { options ->
