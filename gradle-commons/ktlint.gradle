@@ -3,7 +3,7 @@ configurations {
 }
 
 dependencies {
-    ktlint "com.pinterest:ktlint:0.38.1"
+    ktlint "com.pinterest:ktlint:0.40.0"
 }
 
 task ktlint(type: JavaExec, group: "verification") {
@@ -11,12 +11,12 @@ task ktlint(type: JavaExec, group: "verification") {
     classpath = configurations.ktlint
     main = "com.pinterest.ktlint.Main"
     ignoreExitValue = true
-    args "--reporter=checkstyle,output=${project.file('build/reports')}/ktlint/ktlint.xml", "--reporter=plain", "src/**/*.kt"
+    args "--reporter=checkstyle,output=${project.file('build/reports')}/ktlint/ktlint.xml", "--reporter=plain", "src/**/*.kt", "--disabled_rules=no-wildcard-imports"
 }
 
 task ktlintFormat(type: JavaExec, group: "formatting") {
     description = "Fix Kotlin code style deviations."
     classpath = configurations.ktlint
     main = "com.pinterest.ktlint.Main"
-    args '-F', 'src/**/*.kt'
+    args '-F', 'src/**/*.kt', "--disabled_rules=no-wildcard-imports"
 }
