@@ -1,11 +1,10 @@
 package de.smf.setup
-
 import android.app.Application
 import android.util.Log
-import io.sentry.Breadcrumb
 import io.sentry.Sentry
-import io.sentry.SentryLevel
-import io.sentry.android.core.SentryAndroid
+import io.sentry.android.AndroidSentryClientFactory
+import io.sentry.event.Breadcrumb
+import io.sentry.event.BreadcrumbBuilder
 import timber.log.Timber
 
 object SmfSentry {
@@ -15,12 +14,15 @@ object SmfSentry {
         buildType: String
     ) {
 
-        SentryAndroid.init(application) { options ->
-            options.dsn = sentryDSN
+        Sentry.init(
+                sentryDSN,
+                AndroidSentryClientFactory(application)
+        )
+
+        Sentry.getStoredClient().addBuilderHelper {
             val pInfo = application.packageManager.getPackageInfo(application.packageName, 0)
-            options.environment = buildType
-            @Suppress("DEPRECATION")
-            options.release = pInfo.versionName + "-" + pInfo.versionCode
+            it.withEnvironment(buildType)
+                    .withRelease(pInfo.versionName + "-" + pInfo.versionCode)
         }
 
         Timber.plant(SentryLogTree())
@@ -28,24 +30,31 @@ object SmfSentry {
 
     @JvmStatic
     fun capture(e: Throwable) {
-        Sentry.captureException(e)
+        Sentry.capture(e)
     }
 
     private class SentryLogTree : Timber.DebugTree() {
         override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-            val level: SentryLevel = when (priority) {
-                Log.ASSERT -> SentryLevel.FATAL
-                Log.DEBUG -> SentryLevel.DEBUG
-                Log.INFO -> SentryLevel.INFO
-                Log.VERBOSE -> SentryLevel.INFO
-                Log.WARN -> SentryLevel.WARNING
-                Log.ERROR -> SentryLevel.ERROR
-                else -> SentryLevel.INFO
+            val level: Breadcrumb.Level = when (priority) {
+                Log.ASSERT -> Breadcrumb.Level.CRITICAL
+                Log.DEBUG -> Breadcrumb.Level.DEBUG
+                Log.INFO -> Breadcrumb.Level.INFO
+                Log.VERBOSE -> Breadcrumb.Level.INFO
+                Log.WARN -> Breadcrumb.Level.WARNING
+                Log.ERROR -> Breadcrumb.Level.ERROR
+                else -> Breadcrumb.Level.INFO
             }
-            Sentry.addBreadcrumb(Breadcrumb().apply {
-                setMessage("$tag: $message")
-                setLevel(level)
-            })
+            Sentry.getContext().recordBreadcrumb(
+                    BreadcrumbBuilder()
+                            .setMessage("$tag: $message")
+                            .setLevel(level)
+                            .build()
+            )
         }
+    }
+
+    fun setTag(tagKey: String, value: String) {
+        // addTag will do a put on the map
+        Sentry.getContext().addTag(tagKey, value)
     }
 }
