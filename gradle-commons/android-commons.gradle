@@ -1,5 +1,5 @@
 apply from: "$projectDir/../android-commons/gradle-commons/configHandler.gradle"
-apply plugin: 'com.smartmobilefactory.metajson'
+apply from: "$projectDir/../android-commons/gradle-commons/metaJson.gradle"
 apply plugin: 'org.owasp.dependencycheck'
 
 android {
