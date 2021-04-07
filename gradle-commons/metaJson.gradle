@@ -85,8 +85,6 @@ task createProjectJson {
         def compileSdkVersion = android.compileSdkVersion
         values["compileSdkVersion"] = compileSdkVersion.substring(compileSdkVersion.length() - 2, compileSdkVersion.length()).toInteger()
         values["buildToolsVersion"] = android.buildToolsVersion
-        values["dataBinding"] = android.dataBinding.enabled
-        values["jumboMode"] = android.dexOptions.jumboMode
 
         def gradleVersionPattern = ~"^gradle-([0-9]+.*)\\.jar\$"
         def kotlinVersionPattern = ~"^kotlin-stdlib-([0-9]+.*)\\.jar\$"
