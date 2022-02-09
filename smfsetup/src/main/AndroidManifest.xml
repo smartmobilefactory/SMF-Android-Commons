@@ -3,10 +3,12 @@
     package="de.smf.smfsetup">
 
     <application>
+        <!--    ignore checks of provider on projects where sentry is initialized differently    -->
         <provider
             android:name="io.sentry.android.core.SentryInitProvider"
             android:authorities="${applicationId}.SentryInitProvider"
             tools:node="remove"
-            android:exported="false" />
+            android:exported="false"
+            tools:ignore="MissingClass" />
     </application>
 </manifest>
