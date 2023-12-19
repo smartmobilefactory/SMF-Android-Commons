@@ -33,7 +33,7 @@ android {
 
 dependencies {
     // AppCenter
-    def appCenterSdkVersion = '4.4.2'
+    def appCenterSdkVersion = '5.0.4'
     implementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
     debugImplementation "com.microsoft.appcenter:appcenter-distribute:${appCenterSdkVersion}"
     releaseImplementation "com.microsoft.appcenter:appcenter-distribute-play:${appCenterSdkVersion}"
