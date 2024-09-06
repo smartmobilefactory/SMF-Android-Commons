@@ -8,7 +8,7 @@ task allUnitTest {
 buildscript {
     ext {
         defineClasspath = { dependencyHandler ->
-            dependencyHandler.classpath 'com.jaredsburrows:gradle-license-plugin:0.8.91'
+            dependencyHandler.classpath 'com.jaredsburrows:gradle-license-plugin:0.9.6'
             dependencyHandler.classpath "org.owasp:dependency-check-gradle:5.3.0"
         }
 
