@@ -31,12 +31,6 @@ android {
 }
 
 dependencies {
-    // AppCenter
-    def appCenterSdkVersion = '5.0.4'
-    implementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
-    debugImplementation "com.microsoft.appcenter:appcenter-distribute:${appCenterSdkVersion}"
-    releaseImplementation "com.microsoft.appcenter:appcenter-distribute-play:${appCenterSdkVersion}"
-
     implementation 'io.sentry:sentry-android:6.23.0'
     api 'com.jakewharton.timber:timber:5.0.1'
 }
