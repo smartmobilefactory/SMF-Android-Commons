@@ -3,20 +3,31 @@ configurations {
 }
 
 dependencies {
-    ktlint "com.pinterest:ktlint:0.40.0"
+    ktlint "com.pinterest.ktlint:ktlint-cli:1.8.0"
 }
 
 task ktlint(type: JavaExec, group: "verification") {
     description = "Check Kotlin code style."
     classpath = configurations.ktlint
-    main = "com.pinterest.ktlint.Main"
-    ignoreExitValue = true
-    args "--reporter=checkstyle,output=${project.file('build/reports')}/ktlint/ktlint.xml", "--reporter=plain", "src/**/*.kt", "--disabled_rules=no-wildcard-imports"
+
+    mainClass = "com.pinterest.ktlint.Main"
+
+    jvmArgs "--add-opens=java.base/java.lang=ALL-UNNAMED",
+            "--add-opens=java.base/java.util=ALL-UNNAMED",
+            "--add-opens=java.base/java.lang.invoke=ALL-UNNAMED"
+
+    args "--reporter=checkstyle,output=${project.file('build/reports')}/ktlint/ktlint.xml",
+            "--reporter=plain",
+            "src/**/*.kt"
 }
 
 task ktlintFormat(type: JavaExec, group: "formatting") {
     description = "Fix Kotlin code style deviations."
     classpath = configurations.ktlint
-    main = "com.pinterest.ktlint.Main"
-    args '-F', 'src/**/*.kt', "--disabled_rules=no-wildcard-imports"
+    mainClass = "com.pinterest.ktlint.Main"
+    jvmArgs "--add-opens=java.base/java.lang=ALL-UNNAMED",
+            "--add-opens=java.base/java.util=ALL-UNNAMED",
+            "--add-opens=java.base/java.lang.invoke=ALL-UNNAMED"
+
+    args "-F", "src/**/*.kt"
 }

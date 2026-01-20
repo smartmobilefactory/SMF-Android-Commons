@@ -3,11 +3,11 @@ configurations {
 }
 
 dependencies {
-    detekt 'io.gitlab.arturbosch.detekt:detekt-cli:1.23.4'
+    detekt 'io.gitlab.arturbosch.detekt:detekt-cli:1.23.8'
 }
 
 task detekt(type: JavaExec, group: "verification") {
-    main = "io.gitlab.arturbosch.detekt.cli.Main"
+    mainClass = "io.gitlab.arturbosch.detekt.cli.Main"
     classpath = configurations.detekt
     ignoreExitValue = true
     def reportsDir = project.file('build/reports')
