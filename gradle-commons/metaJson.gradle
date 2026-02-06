@@ -19,27 +19,28 @@ ext.writeJsonToFile = { fileName, input ->
     }
 }
 
-task createClocJson {
-    group 'MetaJSON'
-    description 'Writes the cloc output to a file "Cloc.json"'
+tasks.register('createClocJson', Exec) {
+    group = 'MetaJSON'
+    description = 'Writes the cloc output to a file "Cloc.json"'
+
+    ext.output = new ByteArrayOutputStream()
+    standardOutput = ext.output
+    commandLine '/usr/local/bin/cloc', '--vcs=git', '--json'
+
+    doFirst {
+        createDirIfNotExistant()
+    }
 
     doLast {
-        createDirIfNotExistant()
-
-        def output = new ByteArrayOutputStream()
-        exec {
-            commandLine '/usr/local/bin/cloc', '--vcs=git', '--json'
-            standardOutput output
-        }
-        def json = new JsonSlurper().parseText(output.toString())
+        def json = new JsonSlurper().parseText(ext.output.toString())
         json.remove('header')
         writeJsonToFile(FILENAME_CLOC, JsonOutput.prettyPrint(JsonOutput.toJson(json)))
     }
 }
 
-task createDependenciesJson {
-    group 'MetaJSON'
-    description 'Writes all used dependencies to a file "Dependencies.json"'
+tasks.register("createDependenciesJson") {
+    group = 'MetaJSON'
+    description = 'Writes all used dependencies to a file "Dependencies.json"'
 
     doLast {
         createDirIfNotExistant()
@@ -66,9 +67,9 @@ task createDependenciesJson {
 
 }
 
-task createProjectJson {
-    group 'MetaJSON'
-    description 'Writes all project infos to a file "Project.json"'
+tasks.register("createProjectJson") {
+    group = 'MetaJSON'
+    description = 'Writes all project infos to a file "Project.json"'
 
     doLast {
         createDirIfNotExistant()
