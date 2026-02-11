@@ -1,15 +1,15 @@
 
-task allLicenseReport {
+tasks.register("allLicenseReport") {
 }
 
-task allUnitTest {
+tasks.register("allUnitTest") {
 }
 
 buildscript {
     ext {
         defineClasspath = { dependencyHandler ->
-            dependencyHandler.classpath 'com.jaredsburrows:gradle-license-plugin:0.9.6'
-            dependencyHandler.classpath "org.owasp:dependency-check-gradle:5.3.0"
+//            dependencyHandler.classpath 'com.jaredsburrows:gradle-license-plugin:0.9.8'
+            dependencyHandler.classpath "org.owasp:dependency-check-gradle:10.0.3"
         }
 
         forAllProjects = { project ->
@@ -18,28 +18,28 @@ buildscript {
                 return
             }
 
-            project.apply plugin: 'com.jaredsburrows.license'
+//            project.apply plugin: 'com.jaredsburrows.license'
 
             if (project.name != "smfsetup") {
                 project.apply from: "$projectDir/android-commons/gradle-commons/ktlint.gradle"
                 project.apply from: "$projectDir/android-commons/gradle-commons/detekt.gradle"
             }
 
-            project.licenseReport {
-                generateHtmlReport = false
-                generateJsonReport = true
-
-                copyHtmlReportToAssets = false
-                copyJsonReportToAssets = false
-            }
+//            project.licenseReport {
+//                generateHtmlReport = false
+//                generateJsonReport = true
+//
+//                copyHtmlReportToAssets = false
+//                copyJsonReportToAssets = false
+//            }
             project.afterEvaluate {
-                allLicenseReport.dependsOn {
-                    project.tasks.findAll {
-                        task -> task.name.matches('license.*Report') &&
-                                task.name.contains("Release") &&
-                                !task.name.contains("test")
-                    }
-                }
+//                allLicenseReport.dependsOn {
+//                    project.tasks.findAll {
+//                        task -> task.name.matches('license.*Report') &&
+//                                task.name.contains("Release") &&
+//                                !task.name.contains("test")
+//                    }
+//                }
                 allUnitTest.dependsOn {
                     testTasks = project.tasks.findAll {
                         task -> task.name.matches('test.*UnitTest')
