@@ -1,5 +1,3 @@
-apply from: "$projectDir/../android-commons/gradle-commons/configHandler.gradle"
-apply from: "$projectDir/../android-commons/gradle-commons/metaJson.gradle"
 apply plugin: 'org.owasp.dependencycheck'
 
 android {
