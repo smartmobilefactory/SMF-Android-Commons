@@ -1,15 +1,18 @@
 
-task allLicenseReport {
-}
-
 task allUnitTest {
 }
+
+// TODO: Re-add license plugin once AGP 9 support is available
+// See: https://github.com/jaredsburrows/gradle-license-plugin/issues/693
+// task allLicenseReport {}
 
 buildscript {
     ext {
         defineClasspath = { dependencyHandler ->
-            dependencyHandler.classpath 'com.jaredsburrows:gradle-license-plugin:0.9.6'
             dependencyHandler.classpath "org.owasp:dependency-check-gradle:11.1.1"
+            // TODO: Re-add once AGP 9 compatible version is released
+            // See: https://github.com/jaredsburrows/gradle-license-plugin/issues/693
+            // dependencyHandler.classpath 'com.jaredsburrows:gradle-license-plugin:0.9.8'
         }
 
         forAllProjects = { project ->
@@ -18,28 +21,30 @@ buildscript {
                 return
             }
 
-            project.apply plugin: 'com.jaredsburrows.license'
+            // TODO: Re-add once AGP 9 compatible version is released
+            // See: https://github.com/jaredsburrows/gradle-license-plugin/issues/693
+            // project.apply plugin: 'com.jaredsburrows.license'
+            // project.licenseReport {
+            //     generateHtmlReport = false
+            //     generateJsonReport = true
+            //     copyHtmlReportToAssets = false
+            //     copyJsonReportToAssets = false
+            // }
 
             if (project.name != "smfsetup") {
                 project.apply from: "$projectDir/android-commons/gradle-commons/ktlint.gradle"
                 project.apply from: "$projectDir/android-commons/gradle-commons/detekt.gradle"
             }
 
-            project.licenseReport {
-                generateHtmlReport = false
-                generateJsonReport = true
-
-                copyHtmlReportToAssets = false
-                copyJsonReportToAssets = false
-            }
             project.afterEvaluate {
-                allLicenseReport.dependsOn {
-                    project.tasks.findAll {
-                        task -> task.name.matches('license.*Report') &&
-                                task.name.contains("Release") &&
-                                !task.name.contains("test")
-                    }
-                }
+                // TODO: Re-add once license plugin is restored
+                // allLicenseReport.dependsOn {
+                //     project.tasks.findAll {
+                //         task -> task.name.matches('license.*Report') &&
+                //                 task.name.contains("Release") &&
+                //                 !task.name.contains("test")
+                //     }
+                // }
                 allUnitTest.dependsOn {
                     testTasks = project.tasks.findAll {
                         task -> task.name.matches('test.*UnitTest')
