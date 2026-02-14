@@ -9,7 +9,7 @@ buildscript {
     ext {
         defineClasspath = { dependencyHandler ->
             dependencyHandler.classpath 'com.jaredsburrows:gradle-license-plugin:0.9.6'
-            dependencyHandler.classpath "org.owasp:dependency-check-gradle:5.3.0"
+            dependencyHandler.classpath "org.owasp:dependency-check-gradle:11.1.1"
         }
 
         forAllProjects = { project ->
