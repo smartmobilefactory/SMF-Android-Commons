@@ -20,8 +20,8 @@ ext.writeJsonToFile = { fileName, input ->
 }
 
 task createClocJson {
-    group 'MetaJSON'
-    description 'Writes the cloc output to a file "Cloc.json"'
+    group = 'MetaJSON'
+    description = 'Writes the cloc output to a file "Cloc.json"'
 
     doLast {
         createDirIfNotExistant()
@@ -38,8 +38,8 @@ task createClocJson {
 }
 
 task createDependenciesJson {
-    group 'MetaJSON'
-    description 'Writes all used dependencies to a file "Dependencies.json"'
+    group = 'MetaJSON'
+    description = 'Writes all used dependencies to a file "Dependencies.json"'
 
     doLast {
         createDirIfNotExistant()
@@ -67,8 +67,8 @@ task createDependenciesJson {
 }
 
 task createProjectJson {
-    group 'MetaJSON'
-    description 'Writes all project infos to a file "Project.json"'
+    group = 'MetaJSON'
+    description = 'Writes all project infos to a file "Project.json"'
 
     doLast {
         createDirIfNotExistant()

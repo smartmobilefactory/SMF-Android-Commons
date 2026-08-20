@@ -4,11 +4,11 @@ apply plugin: 'org.owasp.dependencycheck'
 
 android {
     lintOptions {
-        abortOnError false
+        abortOnError = false
 
-        lintConfig file("$projectDir/../android-commons/gradle-commons/android-lint-config.xml")
-        xmlOutput file("$projectDir/build/reports/lint/lint-result.xml")
-        htmlOutput file("$projectDir/build/reports/lint/lint-result.html")
+        lintConfig = file("$projectDir/../android-commons/gradle-commons/android-lint-config.xml")
+        xmlOutput = file("$projectDir/build/reports/lint/lint-result.xml")
+        htmlOutput = file("$projectDir/build/reports/lint/lint-result.html")
     }
 }
 

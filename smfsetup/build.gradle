@@ -4,7 +4,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdk 34
+    compileSdk = 36
     namespace = "de.smf.smfsetup"
 
     defaultConfig {
@@ -35,6 +35,6 @@ android {
 }
 
 dependencies {
-    implementation 'io.sentry:sentry-android:8.21.1'
+    implementation 'io.sentry:sentry-android:8.47.0'
     api 'com.jakewharton.timber:timber:5.0.1'
 }
