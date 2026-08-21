@@ -1,13 +1,20 @@
 configurations {
     ktlint {
-        // ktlint-cli 1.8.0 publishes several variants that differ only in the
-        // bundling attribute, so an attribute-less configuration cannot pick one:
-        // "Cannot choose between the available variants of ktlint-cli". Modules that
-        // apply an Android/Kotlin plugin inherit the attribute implicitly; plugin-less
-        // modules (e.g. :opencv in RKITouren) do not and fail to resolve. Request the
-        // shadowed variant explicitly: the task runs ktlint as a CLI via JavaExec, so
-        // it needs the fat jar that bundles clikt and friends - the external variant
-        // resolves but then dies with NoClassDefFoundError: CliktCommand.
+        // Resolvable only: without this the configuration stays consumable, and AGP's
+        // variant-aware resolution can select it for the app runtime classpath. The
+        // shadowed ktlint jar bundles clikt/mordant, whose FFM classes then reach D8
+        // and fail dexing with "MethodHandle.invoke ... only supported starting with
+        // Android O (--min-api 26)".
+        canBeConsumed = false
+        canBeResolved = true
+
+        // ktlint-cli 1.8.0 publishes several variants differing only in the bundling
+        // attribute, so an attribute-less configuration cannot pick one: "Cannot choose
+        // between the available variants of ktlint-cli". Modules applying an
+        // Android/Kotlin plugin inherit the attribute implicitly; plugin-less modules
+        // (e.g. :opencv in RKITouren) do not and fail to resolve. Shadowed rather than
+        // external because the task runs ktlint as a CLI via JavaExec and needs the fat
+        // jar - external resolves but dies with NoClassDefFoundError: CliktCommand.
         attributes {
             attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling, Bundling.SHADOWED))
         }
