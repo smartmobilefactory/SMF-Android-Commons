@@ -1,5 +1,17 @@
 configurations {
-    ktlint
+    ktlint {
+        // ktlint-cli 1.8.0 publishes several variants that differ only in the
+        // bundling attribute, so an attribute-less configuration cannot pick one:
+        // "Cannot choose between the available variants of ktlint-cli". Modules that
+        // apply an Android/Kotlin plugin inherit the attribute implicitly; plugin-less
+        // modules (e.g. :opencv in RKITouren) do not and fail to resolve. Request the
+        // shadowed variant explicitly: the task runs ktlint as a CLI via JavaExec, so
+        // it needs the fat jar that bundles clikt and friends - the external variant
+        // resolves but then dies with NoClassDefFoundError: CliktCommand.
+        attributes {
+            attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling, Bundling.SHADOWED))
+        }
+    }
 }
 
 dependencies {
