@@ -112,7 +112,10 @@ style:
       - '1'
       - '2'
     ignoreHashCodeFunction: true
-    ignorePropertyDeclaration: false
+    # Lookup tables map a name to an externally defined numeric slot (analytics
+    # parameter IDs, protocol codes). There the literal IS the identifier, so the
+    # "well named constant" detekt asks for would just restate it.
+    ignorePropertyDeclaration: true
     ignoreConstantDeclaration: true
     ignoreCompanionObjectPropertyDeclaration: true
     ignoreAnnotation: false
