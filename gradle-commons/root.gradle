@@ -45,14 +45,22 @@ buildscript {
                 //                 !task.name.contains("test")
                 //     }
                 // }
+                // One unit test task per module: the one named by the project property
+                // `smfUnitTestTask`, otherwise the first *DebugUnitTest, otherwise the first
+                // test*UnitTest. Tasks are picked by name only: realizing every task (as
+                // tasks.findAll did) makes AGP 9.5 create the Compose preview runfiles task of
+                // variants without unit tests, which fails the configuration.
                 allUnitTest.dependsOn {
-                    testTasks = project.tasks.findAll {
-                        task -> task.name.matches('test.*UnitTest')
+                    def candidates = project.tasks.names.findAll { it.matches('test.*UnitTest') }
+                    def configured = project.findProperty('smfUnitTestTask')
+                    if (configured) {
+                        if (!candidates.contains(configured)) {
+                            throw new GradleException("smfUnitTestTask '$configured' is not a unit test task of ${project.path}")
+                        }
+                        return [project.tasks.named(configured)]
                     }
-                    if (testTasks.size() > 1) {
-                        testTasks = Collections.singleton(testTasks.first())
-                    }
-                    testTasks
+                    def chosen = candidates.find { it.endsWith('DebugUnitTest') } ?: candidates.find()
+                    chosen ? [project.tasks.named(chosen)] : []
                 }
             }
         }
