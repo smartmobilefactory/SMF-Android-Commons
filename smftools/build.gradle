@@ -63,7 +63,7 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
-    api 'com.jakewharton.timber:timber:4.5.1'
+    api 'com.jakewharton.timber:timber:5.0.1'
     api 'com.jakewharton.byteunits:byteunits:0.9.1'
 
     api 'com.github.timfreiheit:HockeySDKHelper:v0.6.0'
