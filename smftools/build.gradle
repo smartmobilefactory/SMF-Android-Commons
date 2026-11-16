@@ -69,7 +69,7 @@ dependencies {
     api 'com.github.timfreiheit:HockeySDKHelper:v0.6.0'
     api 'com.bugsnag:bugsnag-android:4.1.1'
 
-    def android_support_version = "26.1.0"
+    def android_support_version = "28.0.0"
     implementation "com.android.support:appcompat-v7:${android_support_version}"
     implementation "com.android.support:support-v4:${android_support_version}"
     implementation "com.android.support:support-annotations:${android_support_version}"
