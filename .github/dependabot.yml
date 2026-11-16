@@ -1,0 +1,34 @@
+version: 2
+
+registries:
+  # Google Maven hosts androidx.*, com.google.* and the Firebase artefacts. Without it the
+  # Gradle scanner only looks at Maven Central and the Plugin Portal and never opens PRs for them.
+  google-maven:
+    type: maven-repository
+    url: https://maven.google.com
+
+# One run per week, thursday 05:00 Europe/Berlin: the morning slots (08:00 Mon/Thu, Tue/Fri) stay with
+# the product apps so the dependency PRs of different repos do not land on the same day.
+# No root build script: the two modules are consumed as a submodule by the apps. Versions that
+# come from the consuming project's ext (e.g. android_support_version) cannot be resolved here and
+# are skipped by Dependabot.
+updates:
+  - package-ecosystem: "gradle"
+    directories:
+      - "/smfsetup"
+      - "/smftools"
+    registries:
+      - google-maven
+    schedule:
+      interval: "weekly"
+      day: "thursday"
+      time: "05:00"
+      timezone: "Europe/Berlin"
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "deps"
+    groups:
+      gradle-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
